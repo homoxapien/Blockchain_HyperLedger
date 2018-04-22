@@ -1,0 +1,78 @@
+#Set the working directory
+cd documents/blockchain_Hyperledger/Hyperledger_Composer/DeveloperTutorial
+
+#Start a new runtime on Hyperledger Fabric
+bash ~/fabric-tools/startFabric.sh 
+bash ~/fabric-tools/createPeerAdminCard.sh
+
+#Yeoman generates a skeleton business network
+yo hyperledger-composer:businessnetwork
+:tutorial-network
+:Apache-2.0
+:org.acme.mynetwork
+
+#Generate the business network archive file(.bna)
+cd tutorial-network
+composer archive create -t dir -n .
+
+#Deploy the business network
+##Install the network 
+composer network install --card PeerAdmin@hlfv1 --archiveFile tutorial-network@0.0.1.bna
+##Start the network
+composer network start --networkName tutorial-network --networkVersion 0.0.1 --networkAdmin admin --networkAdminEnrollSecret adminpw --card PeerAdmin@hlfv1 --file networkadmin.card
+##Import the network admin identity
+composer card import --file networkadmin.card
+##Check for successful deployment by pinging the network
+composer network ping --card admin@tutorial-network
+
+#Option1: REST API(by LoopBack)
+##Generate REST server
+composer-rest-server
+:admin@tutorial-network
+:N
+:Y
+:N
+
+#Option2: Angular4 app
+##Yeoman generates Angular4 app
+yo hyperledger-composer:angular
+:Y
+:(metadata about running Business Network)
+:admin@tutorial-network
+:Generate a new REST API
+:3001
+:Never use namespaces
+##Run the Angular4 app
+cd tutorial-network
+npm start
+
+#Terminate the runtime on Hyperledger Fabric
+bash ~/fabric-tools/stopFabric.sh
+bash ~/fabric-tools/teardownFabric.sh
+
+--------------------------------------------------------------------------------
+#Set the working directory:
+cd documents/blockchain_Hyperledger/Hyperledger_Composer/DeveloperTutorial/tutorial-network/
+
+#Start a new runtime on Hyperledger Fabric
+bash ~/fabric-tools/startFabric.sh 
+bash ~/fabric-tools/createPeerAdminCard.sh
+
+#Deploy the business network
+##Install the network 
+composer network install --card PeerAdmin@hlfv1 --archiveFile tutorial-network@0.0.1.bna
+##Start the network
+composer network start --networkName tutorial-network --networkVersion 0.0.1 --networkAdmin admin --networkAdminEnrollSecret adminpw --card PeerAdmin@hlfv1 --file networkadmin.card
+##Import the network admin identity
+composer card import --file networkadmin.card
+##Check for successful deployment by pinging the network
+composer network ping --card admin@tutorial-network
+##Run the Angular4 app
+cd tutorial-network
+npm start
+
+#Terminate the runtime on Hyperledger Fabric
+bash ~/fabric-tools/stopFabric.sh
+bash ~/fabric-tools/teardownFabric.sh
+
+
